@@ -2,8 +2,8 @@
 
 > **Type:** Orchestrator — Plan Revision
 > **Trigger:** Invoked when a phase reveals a gap, contradiction, or changed requirement in `implementation-plan.md`. Can also be invoked directly.
-> **Status:** L0 — PLACEHOLDER. Not yet implemented.
-> **Maturity:** L0: Draft
+> **Maturity:** L1: Specified
+> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
 
 ---
 
@@ -31,54 +31,88 @@ If the implementation is wrong but the plan is right, fix the implementation.
 
 ---
 
-## Behaviour (to be specified)
+## Gap Classification
 
-### Step 1 — Identify and describe the gap
+Before anything else, classify the gap into one of three types:
+
+| Type | Description | Action |
+|---|---|---|
+| **Plan error** | Claude made a wrong assumption or breakdown during planning | Propose targeted changes to `implementation-plan.md` |
+| **Spec error** | `feature-spec.md` is ambiguous, contradictory, or wrong | Ask human to update `feature-spec.md` first, then update plan to match |
+| **New requirement** | Human has changed their mind since G1 | Treat same as spec error — human must explicitly acknowledge the scope change before plan changes |
+
+State the classification at the start of Step 1. Do not proceed to Step 3 (plan changes)
+until the classification is agreed with the human.
+
+---
+
+## Behaviour
+
+### Step 1 — Identify, classify, and describe the gap
 
 State precisely:
 - Which phase and AC triggered the revision
-- What the plan currently says
-- What is wrong or missing
+- Gap type: plan error / spec error / new requirement
+- What the plan currently says vs. what reality requires
 - Which subsequent phases are affected
 
-### Step 2 — Trace to root cause
+### Step 2 — Spec update (if spec error or new requirement)
 
-Determine whether the gap originates in:
-- **`implementation-plan.md`** — a planning error Claude made during breakdown
-- **`feature-spec.md`** — an ambiguity or error in the original spec
+If root is in `feature-spec.md`: ask the human to update it before proposing plan changes.
+Both files must stay consistent. Do not update the plan until the spec is updated.
 
-If the root is in `feature-spec.md`, ask the human to update it before proposing
-plan changes. Both files should stay consistent.
+If root is a plan error: proceed directly to Step 3.
 
 ### Step 3 — Propose targeted changes
 
 Propose the minimum changes to `implementation-plan.md` that resolve the gap.
-Do not rewrite unaffected sections. Present as a diff or clear before/after.
+Format: before/after blocks for each affected section. Do not rewrite unaffected sections.
 
-### Step 4 — Gate G1-R
+### Step 4 — Invalidation check
+
+If already-committed phases are affected by the proposed changes:
+
+1. List the committed phases that conflict with the revision.
+2. Classify each as:
+   - **Compatible** — committed work is still valid; revision only adds or clarifies.
+   - **Incompatible** — committed work contradicts the revision; a fixup commit is needed.
+3. For incompatible phases: do not proceed until human acknowledges and approves a fixup
+   commit strategy. Propose the fixup commit message(s) following Conventional Commits.
+
+### Step 5 — Gate G1-R
 
 ```
 GATE G1-R: Plan Revision Approval
 Status: AWAITING APPROVAL
 
-Gap identified in: Phase [N] — [brief description]
-Root cause: [implementation-plan.md | feature-spec.md]
+Gap type: [plan error | spec error | new requirement]
+Triggered by: Phase [N] — [AC identifier]
+Root cause: [one sentence]
 Phases affected: [list]
+Committed phases affected: [list or "none"]
+Fixup commits needed: [list or "none"]
 
 Proposed changes to implementation-plan.md:
-[before/after or diff]
+
+BEFORE:
+[original section]
+
+AFTER:
+[revised section]
 
 To approve: respond "APPROVED"
-To reject: respond "REJECTED — [reason]" and clarify intent
+To reject: respond "REJECTED — [reason]"
 To request spec update first: respond "UPDATE SPEC — [what needs clarifying]"
 ```
 
-### Step 5 — Apply and resume
+### Step 6 — Apply and resume
 
 On approval:
-- Overwrite `implementation-plan.md` with the revised version
-- Update `implementation-status.md` with a G1-R entry and ADR note
-- Resume from RED for the affected phase
+- Overwrite only the affected sections of `implementation-plan.md`.
+- If `feature-spec.md` was updated, confirm it is consistent with the plan.
+- Update `implementation-status.md` with a G1-R entry (see ADR Note Format below).
+- If fixup commits were needed: make them now before resuming RED.
+- Resume from RED for the affected phase.
 
 ---
 
@@ -98,10 +132,22 @@ On approval:
 
 ---
 
-## Notes for implementation
+## ADR Note Format for G1-R Entries
 
-<!-- Populate when building this skill -->
-- [ ] Define how to handle revisions that invalidate already-committed phases
-- [ ] Define whether committed work needs to be amended or whether a fixup commit is made
-- [ ] Define the ADR note format for G1-R entries in implementation-status.md
-- [ ] Consider: should feature-spec.md also be updated when root cause is there?
+In `implementation-status.md`, G1-R entries follow this format:
+
+```
+### G1-R: [date] — [Phase N: brief description]
+- Gap type: [plan error | spec error | new requirement]
+- Root cause: [one sentence]
+- Changes: [which sections of implementation-plan.md were updated]
+- Phases affected: [list]
+- Fixup commits: [list or "none"]
+- Approved: [timestamp]
+```
+
+---
+
+## Behavioural Tests
+
+See `tests/behaviours/skill-plan-revision.behaviour.md`.

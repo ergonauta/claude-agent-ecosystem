@@ -2,7 +2,8 @@
 
 > **Type:** Orchestrator  
 > **Trigger:** `/implementation-plan`  
-> **Status:** DRAFT — to be refined based on usage
+> **Maturity:** L1: Specified  
+> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
 
 ---
 
@@ -27,6 +28,12 @@ Before running this skill:
 On every invocation, Claude must:
 
 1. Read `context/repo-context.md`
+   - If missing: stop. Tell human to run `/repo-cartographer` first.
+   - If stale: warn. Staleness = any file in the repo changed after the date recorded in the
+     `context/repo-context.md` header line `Generated: YYYY-MM-DD`. Check with:
+     `git log --since="<Generated date>" --oneline | head -5`
+     If commits exist since that date, surface the warning and ask human to confirm or refresh
+     before proceeding. Do not block — warn and continue if human confirms.
 2. Check if `implementation-plan.md` already exists
    - If yes: ask "Resume existing plan or start a new one?"
    - If no: proceed to Planning Mode
@@ -86,36 +93,46 @@ Present the plan to the human.
 ```
 GATE G1: Plan Approval
 Status: AWAITING APPROVAL
-
-Please review implementation-plan.md.
+Plan file: implementation-plan.md
 
 Checklist:
-- [ ] All acceptance criteria are specific and testable
-- [ ] Out-of-scope items are explicitly listed
-- [ ] Failure modes are documented
-- [ ] Phase breakdown is appropriately granular
-- [ ] Risks and open questions are captured
+- [ ] AC_TESTABLE: All acceptance criteria are specific and testable (Given/When/Then)
+- [ ] SCOPE_EXPLICIT: Out-of-scope items are explicitly listed
+- [ ] FAILURE_MODES: Failure modes documented for each phase
+- [ ] PHASE_GRANULAR: Phase breakdown is appropriately granular (reviewable in one sitting)
+- [ ] RISKS_CAPTURED: Risks and open questions are captured
+- [ ] PR_STRATEGY: PR strategy specified (single | stacked — see Branching Strategy section)
 
 To approve: respond "APPROVED"
-To request changes: respond with what needs to change
+To request changes: respond with which checklist item fails and what needs to change
 ```
 
-After approval: update `implementation-status.md` Gate G1 → ✅ APPROVED.
-Proceed to Plan Review (or instruct human to run `/implementation-plan` again for next phase).
+After approval:
+- Update `implementation-status.md` Gate G1 → ✅ APPROVED with timestamp.
+- `implementation-plan.md` is now read-only. Only `/plan-revision` may change it.
 
 ---
 
 ## Handoff
 
 After G1 approval, this skill's job is done.
-The next step is Plan Review — either as part of this session or a new session.
-The human should run the plan review skill or continue in the same session.
+Next step: RED (test writing) for Phase 1. Human runs the RED phase or continues in same session.
 
 ---
 
-## Notes for refinement
+## Scope Change Mid-Implementation
 
-<!-- Add observations from real usage here -->
-- [ ] Define how to handle scope changes mid-implementation
-- [ ] Define behaviour when repo-context.md is stale
-- [ ] Consider adding a "complexity estimate" per phase
+If a phase reveals a requirement that contradicts or expands the approved plan:
+
+1. **Stop.** Do not implement the contradicting requirement.
+2. Describe the conflict precisely (what the plan says vs. what reality requires).
+3. Invoke `/plan-revision`.
+4. Do not proceed to the next phase until G1-R is approved.
+
+Trigger rule: plan/spec is wrong → `/plan-revision`. Implementation is wrong → fix the implementation.
+
+---
+
+## Behavioural Tests
+
+See `tests/behaviours/skill-implementation-plan.behaviour.md`.

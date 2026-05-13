@@ -2,7 +2,8 @@
 
 > **Type:** Workflow — Orchestrator
 > **Trigger:** `/self-review`
-> **Status:** DRAFT — to be refined based on usage
+> **Maturity:** L1: Specified
+> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
 
 ---
 
@@ -30,20 +31,39 @@ Five personas. Each reviews the diff independently from their role's perspective
 
 | Persona | Lens |
 |---|---|
-| **Senior [Stack] Engineer** | Correctness against ACs, idiomatic patterns, performance, framework-specific pitfalls. Stack-specific: use `/react-agent` for React/Next.js, `/fastapi-agent` for FastAPI, etc. |
+| **Senior [Stack] Engineer** | Correctness against ACs, idiomatic patterns, performance, framework-specific pitfalls. Stack-specific: invoke `/react-agent`, `/fastapi-agent`, etc. Fallback when no stack specialist exists: review from generic senior backend/frontend perspective based on `context/repo-context.md` stack field. |
 | **Tech Lead** (`/tech-lead-agent`) | Scope adherence to plan, cross-cutting concerns, delivery risk, anything that blocks the next phase |
 | **Architect** (`/architect-agent`) | Boundary violations, coupling introduced, structural regressions, decisions that should have been ADRs |
-| **QA Engineer** (`/qa-agent`) | Test coverage against ACs, edge cases missing, whether passing tests would give real confidence |
-| **Security Engineer** (`/security-agent`) | OWASP top 10, auth gaps, injection vectors, data exposure, unvalidated inputs |
+| **QA Engineer** (`/qa-agent`) | Test coverage against ACs; edge cases missing; whether passing tests give real confidence. Reviews behaviour, not implementation details. Flags gaps only — does not write tests. |
+| **Security Engineer** (`/security-agent`) | OWASP Top 10; auth gaps; injection vectors; data exposure; unvalidated inputs. Severity tiers: Critical/High → blocking, Medium → should-fix, Low → note. |
+
+---
+
+## Diff Size Handling
+
+Before dispatching, measure the diff:
+
+```
+git diff --stat HEAD | tail -1   # shows insertions/deletions
+```
+
+| Diff size | Strategy |
+|-----------|----------|
+| ≤ 500 lines changed | Dispatch all 5 personas in parallel (default) |
+| > 500 lines changed | Split by file area: group changed files by directory or concern, run each group as a sub-diff. Dispatch personas per group sequentially. Note the split in the summary header. |
+
+The threshold applies to non-test lines. Large test files alone do not trigger sequential mode.
 
 ---
 
 ## Behaviour
 
-### Step 1 — Dispatch in parallel
+### Step 1 — Dispatch in parallel (or split if large diff)
 
 Send the diff and phase context to all five personas simultaneously.
 Each returns CC-formatted findings (see Comment Format below).
+
+For large diffs (>500 lines): split into file-area sub-diffs, run each group through the full panel sequentially, then consolidate all findings into one summary.
 
 ### Step 2 — Consolidate and summarise
 
@@ -160,8 +180,6 @@ After approval: update `implementation-status.md` Gate G5 → ✅ APPROVED.
 
 ---
 
-## Notes for refinement
+## Behavioural Tests
 
-<!-- Add observations from real usage here -->
-- [ ] Define behaviour for very large diffs (split review by file area?)
-- [ ] Define what happens when Senior Engineer persona is not yet implemented for the detected stack
+See `tests/behaviours/skill-self-review.behaviour.md`.
