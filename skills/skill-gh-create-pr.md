@@ -2,7 +2,8 @@
 
 > **Type:** Workflow  
 > **Trigger:** `/gh-create-pr`  
-> **Status:** DRAFT — to be refined based on usage
+> **Maturity:** L1: Specified
+> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
 
 ---
 
@@ -57,7 +58,7 @@ PR Draft — [Feature Name]
 [full draft content]
 
 ---
-GATE G6: PR Approval
+GATE G7: PR Approval
 Status: AWAITING APPROVAL
 
 To approve and open PR: respond "OPEN PR"
@@ -108,10 +109,39 @@ Examples:
 
 ---
 
-## Notes for refinement
+## Stacked PR Flow
 
-<!-- Add observations from real usage here -->
-- [ ] Define handling for multi-phase features that span multiple PRs
-- [ ] Add support for linking to tickets (Jira, Linear, GitHub Issues)
-- [ ] Define reviewer assignment logic
-- [ ] Consider adding label automation based on commit types
+For features with multiple PR stacks (from `/stacked-branches`):
+
+1. Read `Current PR Stack` field in `implementation-status.md` to determine which stack is active.
+2. Scope the PR to commits within that stack's branch only.
+3. Set `--base` to the previous stack's branch (or `main` for the first stack).
+4. After PR opens, update `implementation-status.md` `Current PR Stack` to the next stack.
+
+Example for PR 2 of a 3-PR stack:
+```bash
+gh pr create \
+  --title "feat(domain): add data layer for user auth" \
+  --body "[body]" \
+  --base feature/user-auth/pr-1-generic \
+  --head feature/user-auth/pr-2-domain
+```
+
+---
+
+## Reviewer and Label Fields
+
+Include in the `gh pr create` command if provided in `implementation-plan.md` or by the human at G7:
+
+```bash
+--reviewer username1,username2 \
+--label "feature,needs-review"
+```
+
+If not provided: omit these flags. Do not guess reviewers or labels.
+
+---
+
+## Behavioural Tests
+
+See `tests/behaviours/skill-gh-create-pr.behaviour.md`.

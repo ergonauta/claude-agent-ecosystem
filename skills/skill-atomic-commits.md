@@ -2,7 +2,8 @@
 
 > **Type:** Workflow  
 > **Trigger:** `/atomic-commits`  
-> **Status:** DRAFT — to be refined based on usage
+> **Maturity:** L1: Specified
+> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
 
 ---
 
@@ -184,9 +185,29 @@ To revise: specify which commit needs changes
 
 ---
 
-## Notes for refinement
+## Multi-File Cross-Concern Commits
 
-<!-- Add observations from real usage here -->
-- [ ] Define handling for commits that span multiple files across different concerns
-- [ ] Define how to handle merge commits or rebase scenarios
-- [ ] Add examples of good vs. bad commit messages for common scenarios
+When a sub-step touches files from multiple logical concerns (e.g., a model change that
+also requires a migration and a route update):
+
+- **Prefer splitting** — three commits: `chore(db): add migration`, `feat(model): add field`, `feat(api): expose field on route`
+- **Merge only if inseparable** — if the three changes are atomic (all pass or all fail), one commit is acceptable. Justify this in the body.
+
+Rule: a commit must be reversible without breaking other commits in the sequence. If reverting one commit breaks another, split them.
+
+---
+
+## Merge and Rebase Scenarios
+
+This skill does not handle merge conflicts or rebase operations. When a merge or
+rebase is needed:
+
+1. Abort the commit proposal.
+2. Tell the human: "Resolve the merge/rebase first, then re-run `/atomic-commits`."
+3. Do not attempt to auto-resolve conflicts or amend history.
+
+---
+
+## Behavioural Tests
+
+See `tests/behaviours/skill-atomic-commits.behaviour.md`.

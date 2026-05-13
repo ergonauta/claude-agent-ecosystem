@@ -2,8 +2,8 @@
 
 > **Type:** Specialist Agent
 > **Trigger:** Invoked by `/implementation-plan` during planning when FastAPI stack detected. Can also be invoked directly.
-> **Status:** L0 — PLACEHOLDER. Not yet implemented.
-> **Maturity:** L0: Draft
+> **Maturity:** L1: Specified
+> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
 
 ---
 
@@ -14,49 +14,56 @@ schema, dependency injection, and async concerns during planning.
 
 ---
 
-## Responsibilities (to be specified)
+## Responsibilities
 
 **During spec challenge (Step 2):**
 - Are the described behaviours achievable within FastAPI constraints?
-- Are auth, validation, and error response behaviours stated or assumed?
-- Are there missing edge cases specific to FastAPI (422 validation errors,
-  auth dependency failures, background task edge cases, async vs sync handlers)?
-- Are acceptance criteria testable with pytest + httpx?
+- Are auth, validation, and error response behaviours explicitly stated, or assumed?
+  If assumed: surface them as open questions that must be resolved before G1.
+- FastAPI-specific edge cases to probe:
+  - What should the API return on 422 (Pydantic validation failure)? Is this in the ACs?
+  - If auth is involved: what dependency is used? Is the failure mode specified?
+  - Are background tasks used? What happens if they fail — are errors observable?
+  - Are there sync handlers that should be async (blocking I/O in sync handlers = starvation)?
+- Are acceptance criteria testable with pytest + HTTPX (async test client)?
 
 **During phase review (Step 3):**
-- Are phases sequenced correctly? (schemas and models before route handlers)
-- Are dependency injection trees respected across phases?
-- Does any phase assume a schema or dependency that is built in a later phase?
+- Schemas and Pydantic models must be defined before route handlers that use them — enforce this ordering.
+- Dependency injection trees: no phase assumes a Depends() target that is built in a later phase.
+- Are router includes in the correct order? (auth dependencies before data routes)
 
 **During self-review (Stage 5):**
-- Are response models correct and complete — no unintended field exposure?
-- Are status codes semantically correct for each route?
-- Are dependencies correctly scoped (request vs. lifespan)?
-- Are async handlers used where needed and avoided where not?
-- Do the changes follow the route and schema conventions in `repo-context.md`?
+- Response models: is `response_model` set on all routes? Are all sensitive fields excluded from the schema?
+- Status codes: 201 for creation, 204 for no-content deletes, 422 for validation, 401/403 for auth — check against ACs.
+- Dependency scope: request-scoped vs. lifespan-scoped dependencies correctly assigned.
+- Async hygiene: no `time.sleep()`, no sync DB calls in async handlers.
+- 422 handling: does the route have a custom exception handler or does Pydantic's default schema leak?
+- Do changes follow route and schema conventions in `repo-context.md`?
 
 ---
 
-## Inputs (to be specified)
+## Inputs
 
 - `feature-spec.md`
 - `context/repo-context.md`
 - Proposed phase breakdown from `/implementation-plan`
+- Diff (self-review only)
 
 ---
 
-## Output (to be specified)
+## Output Format
 
-- Planning findings: structured list of risks, missing phases, sequencing concerns
-  (format TBD — not CC, these are planning concerns not code review)
-- Self-review findings: Conventional Comments format — `issue (blocking)`, `suggestion`,
-  `question`, etc. Tagged with source agent. Returned to `/self-review` orchestrator.
+Same structure as `/react-agent`. See that skill for format specification.
+Tag all self-review findings with `*(source: fastapi-agent)*`.
 
 ---
 
-## Notes for implementation
+## G1 Integration
 
-<!-- Populate when building this skill in Phase 2 -->
-- [ ] Define exact output format
-- [ ] Define how feedback integrates into G1 gate output
-- [ ] Decide: does this agent write to plan directly or return to orchestrator?
+Same as `/react-agent` — returns findings to `/implementation-plan` orchestrator for merging. Does not write to plan directly.
+
+---
+
+## Behavioural Tests
+
+See `tests/behaviours/skill-fastapi-agent.behaviour.md`.

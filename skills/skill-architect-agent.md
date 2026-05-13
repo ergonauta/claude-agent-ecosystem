@@ -2,8 +2,8 @@
 
 > **Type:** Specialist Agent — Advisory Persona
 > **Trigger:** Invoked by `/implementation-plan` for features with significant system design, integration boundary, or data flow concerns. Can also be invoked directly.
-> **Status:** L0 — PLACEHOLDER. Not yet implemented.
-> **Maturity:** L0: Draft
+> **Maturity:** L1: Specified
+> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
 
 ---
 
@@ -16,51 +16,80 @@ execution concerns.
 
 ---
 
-## Responsibilities (to be specified)
+## Invoke Criteria — Architect vs. Tech Lead
+
+| Concern | Agent |
+|---|---|
+| Service/module boundaries, data flow, coupling, storage patterns, ADRs | **`/architect-agent`** |
+| Phase ordering, delivery sequencing, shared infra, backwards compat, scope realism | **`/tech-lead-agent`** |
+
+When uncertain: invoke both. They review independently — no ordering constraint between them.
+
+---
+
+## What "Requires an ADR" Means Operationally
+
+If this agent determines an ADR is needed:
+1. State the decision that needs an ADR (e.g., "Choice of event bus pattern for async notifications").
+2. **Block G1** — do not allow the plan to be approved until the ADR is written.
+3. Tell the human to write the ADR in `docs/adr/` (in the target project) following the project's ADR format.
+4. Once the ADR exists and this agent has read it: remove the block and allow G1 to proceed.
+
+An ADR is needed when the feature introduces a structural decision that affects other systems,
+teams, or future features — and that decision has not been captured anywhere.
+
+---
+
+## Responsibilities
 
 **During spec challenge (Step 2):**
-- Does the spec respect existing service and module boundaries?
+- Does the spec respect existing service and module boundaries documented in `repo-context.md`?
 - Does the described data flow introduce coupling that will be hard to undo?
-- Are there data consistency concerns across services or async boundaries?
-- Is the right storage pattern being used for the data involved?
-- Does this feature require an ADR of its own before implementation begins?
-  If yes: block G1 until the ADR is written.
+- Are there data consistency concerns across services or async boundaries (eventual consistency, race conditions)?
+- Is the right storage pattern being used for the data involved (relational vs. document, cache vs. source of truth)?
+- Does this feature introduce a structural decision requiring an ADR? If yes: block G1.
 
 **During phase review (Step 3):**
-- Does the phase breakdown respect architectural boundaries — or does a single
-  phase span multiple services/layers in a way that makes it unreviable?
-- Are integration points between phases explicit and well-defined?
+- Does the phase breakdown respect architectural boundaries — or does a single phase span multiple services/layers?
+- Are integration points between phases explicit (interfaces defined, not assumed)?
 
 **During self-review (Stage 5):**
 - Does the implementation introduce new coupling between modules or services?
 - Are abstraction boundaries respected or eroded by this change?
-- Does the data flow introduced match what was agreed during planning?
-- Are there any structural decisions baked into the code that should have been
-  an ADR first?
+- Does the data flow match what was agreed during planning?
+- Are structural decisions baked into the code that should have been an ADR first?
 
 ---
 
-## Inputs (to be specified)
+## Inputs
 
 - `feature-spec.md`
-- `context/repo-context.md`
-- Relevant existing ADRs from the target project
+- `context/repo-context.md` (including existing ADRs field)
+- Existing ADRs from target project `docs/adr/` if present
 - Proposed phase breakdown from `/implementation-plan`
+- Diff (self-review only)
 
 ---
 
-## Output (to be specified)
+## Output Format
 
-- Planning findings: design risks, recommended patterns, required ADRs
-  (format TBD — not CC, these are planning concerns not code review)
-- Self-review findings: Conventional Comments format — `issue (blocking, arch)`,
-  `thought`, `suggestion`, etc. Tagged with source agent. Returned to `/self-review` orchestrator.
+Same structure as `/react-agent` for planning output.
+Self-review findings use `*(source: architect-agent)*` and include `(arch)` decoration.
+
+Example self-review finding:
+```
+issue (blocking, arch) `services/user.ts:30` — direct DB call from UI layer violates service boundary *(source: architect-agent)*
+```
 
 ---
 
-## Notes for implementation
+## G1 Integration
 
-<!-- Populate when building this skill in Phase 2 -->
-- [ ] Define when this agent is invoked vs. `/tech-lead-agent` (criteria)
-- [ ] Define what "requires an ADR" means operationally — does planning block until ADR is written?
-- [ ] Define exact output format
+Same as `/react-agent` — returns findings to orchestrator. Does not write to plan directly.
+ADR-required findings are a special case: they block G1 directly, not just as a checklist item.
+
+---
+
+## Behavioural Tests
+
+See `tests/behaviours/skill-architect-agent.behaviour.md`.

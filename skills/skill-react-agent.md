@@ -2,8 +2,8 @@
 
 > **Type:** Specialist Agent
 > **Trigger:** Invoked by `/implementation-plan` during planning when React or Next.js stack detected. Can also be invoked directly.
-> **Status:** L0 — PLACEHOLDER. Not yet implemented.
-> **Maturity:** L0: Draft
+> **Maturity:** L1: Specified
+> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
 
 ---
 
@@ -15,49 +15,85 @@ and rendering strategy risks during planning.
 
 ---
 
-## Responsibilities (to be specified)
+## Responsibilities
 
 **During spec challenge (Step 2):**
 - Are the described behaviours achievable within React/Next.js constraints?
-- Are rendering strategy decisions (SSR, CSR, RSC) implied but unstated?
-- Are there missing edge cases specific to React (loading states, error boundaries,
-  suspense, hydration, SSR/CSR split)?
-- Are acceptance criteria testable with standard React testing tools (RTL, Playwright)?
+- Are rendering strategy decisions (SSR, CSR, RSC) implied but unstated? If a page needs
+  interactivity AND server data, is the Server → Client component boundary explicit in the spec?
+- Are there missing edge cases specific to React:
+  - Loading states (Suspense fallbacks, skeleton screens)
+  - Error boundaries (what happens when a fetch fails)
+  - Hydration mismatch risk (SSR content differs from client render)
+  - Empty/null states (no data returned)
+- Are acceptance criteria testable with standard React tooling (RTL, Playwright, Vitest)?
+- For Next.js App Router: are route segments, layouts, and parallel routes considered?
 
 **During phase review (Step 3):**
-- Are phases sequenced correctly for React? (shared components before consuming pages)
-- Are state management boundaries respected across phases?
-- Does any phase assume a component exists that is built in a later phase?
+- Are shared/reusable components built before consuming pages? (correct phase order)
+- Are state management boundaries respected across phases? (no phase assumes global state that doesn't exist yet)
+- Does any phase import a component created in a later phase?
+- For Next.js: are `'use client'` boundaries pushed as deep as possible? (avoid marking parent as client when only leaf needs interactivity)
 
 **During self-review (Stage 5):**
-- Is the implementation idiomatic React? (hooks rules, component composition, prop patterns)
-- Are there unnecessary re-renders, missing memoisation, or stale closure bugs?
-- Are loading, error, and empty states handled consistently?
-- Are client/server boundaries respected (Next.js RSC, use client, env vars)?
-- Do the changes follow the component and naming conventions in `repo-context.md`?
+- Is the implementation idiomatic React? (hooks rules, no hooks in conditionals, composition over inheritance)
+- Are there unnecessary re-renders? (missing `useMemo`, `useCallback`, or `React.memo` where needed)
+- Are stale closure bugs present in `useEffect` dependency arrays?
+- Are loading, error, and empty states handled consistently across components?
+- For Next.js RSC: are client/server boundaries correct? (`'use client'` not added unnecessarily; API keys not exposed to client-side code; `NEXT_PUBLIC_` prefix only on public vars)
+- Do changes follow component and naming conventions in `repo-context.md`?
 
 ---
 
-## Inputs (to be specified)
+## Inputs
 
 - `feature-spec.md`
 - `context/repo-context.md`
 - Proposed phase breakdown from `/implementation-plan`
+- Diff (self-review only)
 
 ---
 
-## Output (to be specified)
+## Output Format
 
-- Planning findings: structured list of risks, missing phases, sequencing concerns
-  (format TBD — not CC, these are planning concerns not code review)
-- Self-review findings: Conventional Comments format — `issue (blocking)`, `suggestion`,
-  `question`, etc. Tagged with source agent. Returned to `/self-review` orchestrator.
+### Planning output (spec challenge + phase review)
+
+Returned to `/implementation-plan` orchestrator. Not written directly to plan.
+
+```
+## React/Next.js Specialist Review
+
+### Blockers (must resolve before G1)
+- [description]: [what needs to be specified or changed]
+
+### Risks (non-blocking but should be addressed)
+- [description]: [recommendation]
+
+### Questions (open — human must resolve)
+- [question]
+```
+
+If no findings: `## React/Next.js Specialist Review — No blocking concerns found.`
+
+### Self-review output (Stage 5)
+
+Conventional Comments format, tagged `*(source: react-agent)*`. Returned to `/self-review` orchestrator.
+
+```
+issue (blocking) `path/to/Component.tsx:45` — [description] *(source: react-agent)*
+suggestion (non-blocking) `path/to/Component.tsx:67` — [description] *(source: react-agent)*
+```
 
 ---
 
-## Notes for implementation
+## G1 Integration
 
-<!-- Populate when building this skill in Phase 2 -->
-- [ ] Define exact output format
-- [ ] Define how feedback integrates into G1 gate output
-- [ ] Decide: does this agent write to plan directly or return to orchestrator?
+This agent returns its findings to `/implementation-plan`. The orchestrator merges
+all specialist findings into the G1 spec challenge output — this agent does not
+modify `implementation-plan.md` directly.
+
+---
+
+## Behavioural Tests
+
+See `tests/behaviours/skill-react-agent.behaviour.md`.

@@ -2,7 +2,8 @@
 
 > **Type:** Specialist  
 > **Trigger:** `/repo-cartographer`  
-> **Status:** DRAFT — to be refined based on usage
+> **Maturity:** L1: Specified
+> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
 
 ---
 
@@ -24,19 +25,33 @@ at the start of every feature session.
 
 ---
 
+## Large Codebase Sampling
+
+For repos with >50 directories or >1000 files: do not attempt full traversal.
+Sample instead:
+
+1. Read the top-level directory structure only (one level deep).
+2. Identify the top 3 most-changed directories from `git log --stat --since="30 days ago" | grep "| " | sort -k3 -rn | head -20` — these are the most active areas.
+3. Sample 2-3 files per active directory, prioritising test files and API route files.
+4. Note in the output that sampling was used and which areas were covered.
+
+For repos with ≤50 directories: read all.
+
+---
+
 ## What to Read
 
 Claude reads the following, in order:
 
-1. **Project root** — `package.json`, `tsconfig.json`, `README.md`, `.eslintrc`, `.prettierrc`
+1. **Project root** — `package.json`, `tsconfig.json`, `pyproject.toml`, `README.md`, `.eslintrc`, `.prettierrc`
 2. **Directory structure** — top-level layout, `src/` structure, notable folders
-3. **Entry points** — `index.ts`, `app.ts`, `main.ts` or equivalent
-4. **Component patterns** — sample React components across 2-3 feature areas
+3. **Entry points** — `index.ts`, `app.ts`, `main.ts`, `main.py`, `app.py` or equivalent
+4. **Component/feature patterns** — sample files across 2-3 feature areas
 5. **API/service patterns** — sample route handlers or service files
 6. **Test patterns** — sample test files, test utilities, setup files
-7. **Shared utilities** — common helpers, hooks, context providers
+7. **Shared utilities** — common helpers, hooks, context providers, dependencies
 8. **Type definitions** — key interfaces and types from `types/` or equivalent
-9. **Existing ADRs** — if `docs/adr/` exists in the target project
+9. **Existing ADRs** — if `docs/adr/` exists in the target project (read all)
 
 ---
 
@@ -117,9 +132,17 @@ Update the file based on feedback before saving.
 
 ---
 
-## Notes for refinement
+## Recent Changes Section
 
-<!-- Add observations from real usage here -->
-- [ ] Define how to handle very large codebases (sampling strategy)
-- [ ] Define staleness detection — when should the human be prompted to re-run?
-- [ ] Consider adding a "recent changes" section from git log
+Append a `## Recent Changes` section to the output using:
+```
+git log --oneline --since="14 days ago" | head -10
+```
+
+This gives skills a quick signal of what areas are actively in flux, without requiring a full re-run.
+
+---
+
+## Behavioural Tests
+
+See `tests/behaviours/skill-repo-cartographer.behaviour.md`.
