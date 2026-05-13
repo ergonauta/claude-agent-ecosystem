@@ -1,0 +1,1 @@
+../../skills/skill-atomic-commits.md
