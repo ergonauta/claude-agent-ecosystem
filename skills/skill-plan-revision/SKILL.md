@@ -1,10 +1,11 @@
-# Skill: /plan-revision
-
-> **Type:** Orchestrator — Plan Revision
-> **Trigger:** Invoked when a phase reveals a gap, contradiction, or changed requirement in `implementation-plan.md`. Can also be invoked directly.
-> **Maturity:** L1: Specified
-> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
-
+---
+name: skill-plan-revision
+description: Handle scope changes, contradictions, or new information that invalidates part of the current implementation plan. Invoke when mid-phase corrections are needed — classifies gaps and proposes targeted plan amendments with gate G1-R approval.
+compatibility: Designed for Claude Code
+metadata:
+  type: Orchestrator — Plan Revision
+  trigger: Invoked when a phase reveals a gap, contradiction, or changed requirement in implementation-plan.md. Can also be invoked directly.
+  maturity: L1: Specified
 ---
 
 ## Purpose

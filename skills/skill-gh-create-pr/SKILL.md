@@ -1,10 +1,11 @@
-# Skill: /gh-create-pr
-
-> **Type:** Workflow  
-> **Trigger:** `/gh-create-pr`  
-> **Maturity:** L1: Specified
-> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
-
+---
+name: skill-gh-create-pr
+description: Draft and create GitHub pull requests after feature implementation. Use at gate G7 to generate PR title, body, labels, and reviewers from the implementation plan and status files.
+compatibility: Designed for Claude Code
+metadata:
+  type: Workflow
+  trigger: /gh-create-pr
+  maturity: L1: Specified
 ---
 
 ## Purpose

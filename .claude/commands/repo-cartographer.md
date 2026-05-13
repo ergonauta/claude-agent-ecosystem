@@ -1,1 +1,1 @@
-../../skills/skill-repo-cartographer.md
+../../skills/skill-repo-cartographer/SKILL.md

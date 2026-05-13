@@ -1,10 +1,11 @@
-# Skill: /atomic-commits
-
-> **Type:** Workflow  
-> **Trigger:** `/atomic-commits`  
-> **Maturity:** L1: Specified
-> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
-
+---
+name: skill-atomic-commits
+description: Review and validate commit messages for Conventional Commits compliance. Use during implementation sub-steps to validate proposed commits, and at gate G6 before final commit approval.
+compatibility: Designed for Claude Code
+metadata:
+  type: Workflow
+  trigger: /atomic-commits
+  maturity: L1: Specified
 ---
 
 ## Purpose

@@ -1,10 +1,11 @@
-# Skill: /repo-cartographer
-
-> **Type:** Specialist  
-> **Trigger:** `/repo-cartographer`  
-> **Maturity:** L1: Specified
-> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
-
+---
+name: skill-repo-cartographer
+description: Generate a structured snapshot of a codebase at context/repo-context.md. Run once per project onboarding or when repo structure changes significantly. Required before running /implementation-plan.
+compatibility: Designed for Claude Code
+metadata:
+  type: Specialist
+  trigger: /repo-cartographer
+  maturity: L1: Specified
 ---
 
 ## Purpose

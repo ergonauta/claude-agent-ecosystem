@@ -1,1 +1,1 @@
-../../skills/skill-implementation-plan.md
+../../skills/skill-implementation-plan/SKILL.md

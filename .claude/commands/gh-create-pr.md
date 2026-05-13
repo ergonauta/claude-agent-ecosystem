@@ -1,1 +1,1 @@
-../../skills/skill-gh-create-pr.md
+../../skills/skill-gh-create-pr/SKILL.md

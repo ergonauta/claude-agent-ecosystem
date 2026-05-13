@@ -1,10 +1,11 @@
-# Skill: /qa-agent
-
-> **Type:** Specialist Agent
-> **Trigger:** Invoked by `/self-review` during Stage 5. Can also be invoked directly.
-> **Maturity:** L1: Specified
-> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
-
+---
+name: skill-qa-agent
+description: QA specialist reviewing test quality, coverage gaps, and AC-to-test mapping. Invoked by /self-review or directly. Flags missing tests for ACs, implementation-detail assertions, and untested edge cases.
+compatibility: Designed for Claude Code
+metadata:
+  type: Specialist Agent
+  trigger: Invoked by /self-review during Stage 5. Can also be invoked directly.
+  maturity: L1: Specified
 ---
 
 ## Purpose

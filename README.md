@@ -40,12 +40,12 @@ claude-agent-ecosystem/
 │   └── adr/                           ← Architectural decision records
 │
 ├── skills/
-│   ├── skill-implementation-plan.md   ← Master orchestrator
-│   ├── skill-repo-cartographer.md     ← One-time codebase reader
-│   ├── skill-self-review.md
-│   ├── skill-atomic-commits.md
-│   ├── skill-gh-create-pr.md
-│   └── skill-*.md                     ← Specialist agents
+│   ├── skill-implementation-plan/     ← Master orchestrator
+│   │   └── SKILL.md
+│   ├── skill-repo-cartographer/       ← One-time codebase reader
+│   │   └── SKILL.md
+│   └── skill-*/                       ← All other skills
+│       └── SKILL.md
 │
 ├── scripts/
 │   └── install.sh                     ← Install skills into a target project

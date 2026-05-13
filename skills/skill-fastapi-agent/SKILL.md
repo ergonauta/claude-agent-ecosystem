@@ -1,10 +1,11 @@
-# Skill: /fastapi-agent
-
-> **Type:** Specialist Agent
-> **Trigger:** Invoked by `/implementation-plan` during planning when FastAPI stack detected. Can also be invoked directly.
-> **Maturity:** L1: Specified
-> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
-
+---
+name: skill-fastapi-agent
+description: FastAPI/Python specialist reviewing staged diffs for API design, input validation, error handling, and Python patterns. Invoked by /self-review for Python backend changes, or by /implementation-plan for spec challenges on FastAPI stacks.
+compatibility: Designed for Claude Code
+metadata:
+  type: Specialist Agent
+  trigger: Invoked by /implementation-plan during planning when FastAPI stack detected. Can also be invoked directly.
+  maturity: L1: Specified
 ---
 
 ## Purpose

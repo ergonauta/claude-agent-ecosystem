@@ -1,10 +1,11 @@
-# Skill: /react-agent
-
-> **Type:** Specialist Agent
-> **Trigger:** Invoked by `/implementation-plan` during planning when React or Next.js stack detected. Can also be invoked directly.
-> **Maturity:** L1: Specified
-> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
-
+---
+name: skill-react-agent
+description: React/Next.js specialist reviewing staged diffs for component patterns, hook misuse, accessibility, and performance. Invoked by /self-review for frontend changes, or by /implementation-plan for spec challenges on React/Next.js stacks.
+compatibility: Designed for Claude Code
+metadata:
+  type: Specialist Agent
+  trigger: Invoked by /implementation-plan during planning when React or Next.js stack detected. Can also be invoked directly.
+  maturity: L1: Specified
 ---
 
 ## Purpose

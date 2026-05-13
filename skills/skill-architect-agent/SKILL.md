@@ -1,10 +1,11 @@
-# Skill: /architect-agent
-
-> **Type:** Specialist Agent — Advisory Persona
-> **Trigger:** Invoked by `/implementation-plan` for features with significant system design, integration boundary, or data flow concerns. Can also be invoked directly.
-> **Maturity:** L1: Specified
-> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
-
+---
+name: skill-architect-agent
+description: System architect challenging architecture decisions, service coupling, and scalability during planning. Invoked at gate G1 when system-level design is non-trivial, and as part of /self-review at gate G5 for structural regressions.
+compatibility: Designed for Claude Code
+metadata:
+  type: Specialist Agent — Advisory Persona
+  trigger: Invoked by /implementation-plan for features with significant system design, integration boundary, or data flow concerns. Can also be invoked directly.
+  maturity: L1: Specified
 ---
 
 ## Purpose

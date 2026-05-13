@@ -1,10 +1,11 @@
-# Skill: /stacked-branches
-
-> **Type:** Specialist — Branching Strategy Planner
-> **Trigger:** Invoked by `/implementation-plan` during Step 3 (phase breakdown) when more than one PR boundary is identified. Can also be invoked directly.
-> **Maturity:** L1: Specified
-> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
-
+---
+name: skill-stacked-branches
+description: Plan and execute stacked PR branching strategies for multi-concern features. Invoke when a feature spans multiple independent concerns that should land as sequential PRs. Produces a branch dependency map embedded in implementation-plan.md.
+compatibility: Designed for Claude Code
+metadata:
+  type: Specialist — Branching Strategy Planner
+  trigger: Invoked by /implementation-plan during Step 3 (phase breakdown) when more than one PR boundary is identified. Can also be invoked directly.
+  maturity: L1: Specified
 ---
 
 ## Purpose

@@ -1,10 +1,11 @@
-# Skill: /security-agent
-
-> **Type:** Specialist Agent
-> **Trigger:** Invoked by `/self-review` during Stage 5. Can also be invoked directly.
-> **Maturity:** L1: Specified
-> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
-
+---
+name: skill-security-agent
+description: Security specialist scanning staged diffs for vulnerabilities. Invoked by /self-review or directly. Checks OWASP Top 10, stack-specific issues, and assigns P1/P2/P3 severity tiers to findings.
+compatibility: Designed for Claude Code
+metadata:
+  type: Specialist Agent
+  trigger: Invoked by /self-review during Stage 5. Can also be invoked directly.
+  maturity: L1: Specified
 ---
 
 ## Purpose

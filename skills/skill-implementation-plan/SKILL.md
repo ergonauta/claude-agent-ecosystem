@@ -1,10 +1,11 @@
-# Skill: /implementation-plan
-
-> **Type:** Orchestrator  
-> **Trigger:** `/implementation-plan`  
-> **Maturity:** L1: Specified  
-> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
-
+---
+name: skill-implementation-plan
+description: Orchestrate the full feature delivery workflow from planning through PR. Invoke to start a new feature, resume work after a context clear, or handle scope changes mid-implementation.
+compatibility: Designed for Claude Code
+metadata:
+  type: Orchestrator
+  trigger: /implementation-plan
+  maturity: L1: Specified
 ---
 
 ## Purpose

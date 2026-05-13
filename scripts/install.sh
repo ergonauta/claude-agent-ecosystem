@@ -51,8 +51,8 @@ done
 # --- list mode ---
 if [[ "$LIST" -eq 1 ]]; then
   echo "Available skills:"
-  for f in "$SKILLS_DIR"/skill-*.md; do
-    name="$(basename "$f" .md | sed 's/^skill-//')"
+  for f in "$SKILLS_DIR"/skill-*/SKILL.md; do
+    name="$(basename "$(dirname "$f")" | sed 's/^skill-//')"
     printf "  %s\n" "$name"
   done
   exit 0
@@ -88,7 +88,7 @@ skipped=0
 errors=0
 
 for skill in "${SKILLS[@]}"; do
-  src="$SKILLS_DIR/skill-${skill}.md"
+  src="$SKILLS_DIR/skill-${skill}/SKILL.md"
   dst="$COMMANDS_DIR/${skill}.md"
 
   if [[ ! -f "$src" ]]; then

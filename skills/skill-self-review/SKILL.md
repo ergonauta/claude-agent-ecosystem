@@ -1,10 +1,11 @@
-# Skill: /self-review
-
-> **Type:** Workflow — Orchestrator
-> **Trigger:** `/self-review`
-> **Maturity:** L1: Specified
-> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
-
+---
+name: skill-self-review
+description: Assemble a 5-persona review panel to evaluate staged diffs at gate G5. Dispatches qa-agent, security-agent, tech-lead-agent, architect-agent, and a stack specialist. Outputs a consolidated findings list with blocking/non-blocking classifications.
+compatibility: Designed for Claude Code
+metadata:
+  type: Workflow — Orchestrator
+  trigger: /self-review
+  maturity: L1: Specified
 ---
 
 ## Purpose

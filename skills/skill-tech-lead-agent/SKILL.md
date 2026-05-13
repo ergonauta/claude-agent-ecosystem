@@ -1,10 +1,11 @@
-# Skill: /tech-lead-agent
-
-> **Type:** Specialist Agent — Advisory Persona
-> **Trigger:** Invoked by `/implementation-plan` during planning for cross-cutting architectural concerns. Can also be invoked directly.
-> **Maturity:** L1: Specified
-> **Status:** SPECIFIED — behavioural tests written; not yet human-verified
-
+---
+name: skill-tech-lead-agent
+description: Advisory tech lead challenging design decisions, naming conventions, and patterns before implementation. Invoked at gate G1 during planning when non-trivial design choices are present, and as part of /self-review at gate G5.
+compatibility: Designed for Claude Code
+metadata:
+  type: Specialist Agent — Advisory Persona
+  trigger: Invoked by /implementation-plan for cross-cutting architectural concerns. Can also be invoked directly.
+  maturity: L1: Specified
 ---
 
 ## Purpose

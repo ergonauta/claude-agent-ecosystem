@@ -1,1 +1,1 @@
-../../skills/skill-atomic-commits.md
+../../skills/skill-atomic-commits/SKILL.md
